@@ -1,4 +1,4 @@
-# Dashboard SPA com Flask, MongoDB e XGBoost
+# Dashboard SPA com Flask, PostgreSQL e Random Forest
 
 Este projeto é uma aplicação web desenvolvida para o Centro de Controle do Corpo de Bombeiros (CBMPE). Ele consiste em um dashboard operacional para monitoramento de ocorrências em tempo real e um módulo de Inteligência Artificial para predição da natureza de incidentes.
 
