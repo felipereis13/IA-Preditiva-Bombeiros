@@ -1,31 +1,34 @@
 # Dashboard SPA com Flask, MongoDB e XGBoost
 
-Este projeto é uma aplicação web do tipo **SPA (Single Page Application)** desenvolvida com **Flask**, **MongoDB** e **XGBoost** para análise e visualização de dados de ocorrências (como assaltos, agressões, etc.).
+Este projeto é uma aplicação web desenvolvida para o Centro de Controle do Corpo de Bombeiros (CBMPE). Ele consiste em um dashboard operacional para monitoramento de ocorrências em tempo real e um módulo de Inteligência Artificial para predição da natureza de incidentes.
 
-A aplicação permite inserir e consultar dados via API, além de treinar e visualizar os resultados de um modelo de machine learning XGBoost. Os dados são apresentados de forma interativa em uma página web única, com gráficos dinâmicos que ajudam na interpretação dos padrões registrados.
+A aplicação utiliza Python (Flask) no backend, integrando-se a um banco de dados PostgreSQL já existente (populado via Java/Spring Boot). O frontend é uma SPA (Single Page Application) que consome dados via API e exibe indicadores estratégicos.
 
 ---
 
-## 🔍 O que o projeto faz
+## 🔍 Funcionalidades
 
-- Permite **cadastrar e consultar ocorrências**, com informações da vítima (etnia e idade) e do tipo de caso.
-- Treina um modelo **XGBoost** para avaliar a importância das variáveis na previsão do tipo de caso.
-- Exibe gráficos interativos:
-  - Gráfico de rosca com os tipos de caso.
-  - Gráfico de barras com a distribuição de idades das vítimas.
-  - Gráfico horizontal com a **importância das variáveis no modelo XGBoost**.
-- Permite aplicar filtros por intervalo de datas diretamente na interface.
-- **Inclui uma caixa de previsão de tipo de caso:**  
-  Preencha etnia, localização e idade para prever automaticamente o tipo de caso mais provável, usando o modelo treinado.
-- Interface totalmente SPA, sem recarregamento de página.
+-Dashboard Operacional:
+  -KPI em Tempo Real: Exibe o total de ocorrências registradas no banco.
+  -Gráfico de Natureza: Distribuição percentual dos chamados (ex: Incêndio, Salvamento, APH).
+  -Top 5 Bairros: Gráfico de barras indicando as áreas com maior demanda (para alocação estratégica de viaturas).
+  -Situação de Vítimas: Comparativo entre ocorrências com e sem vítimas.
+
+-Módulo de Inteligência Artificial:
+  -Utiliza um modelo Random Forest Classifier (Scikit-learn).
+  -Simulação Preditiva: O usuário insere o Gênero, Idade e Localização (Bairro).
+  -Resultado: O sistema retorna a Classificação provável (Tipo: Subtipo) e o nível de confiança (probabilidade) da previsão.
+
+-Integração de Dados:
+  -O sistema lê automaticamente os bairros e tipos de ocorrência cadastrados no banco PostgreSQL para manter os formulários sempre atualizados.
 
 ---
 
 ## 🛠 Tecnologias utilizadas
 
 - **Python + Flask** (API backend)
-- **MongoDB** (banco de dados)
-- **XGBoost** (modelo de aprendizado de máquina)
+- **PostgreSQL** (banco de dados)
+- **Random Forest** (modelo de aprendizado de máquina)
 - **Chart.js + HTML/CSS/JavaScript** (frontend SPA)
 - **Pandas e scikit-learn** (tratamento de dados e modelagem)
 
@@ -36,7 +39,7 @@ A aplicação permite inserir e consultar dados via API, além de treinar e visu
 1. Clone o repositório:
 
 ```bash
-git clone https://github.com/seu-usuario/seu-repo.git](https://github.com/weltondionisio/SPA_dashboard_com_modelo_preditivo
+git clone https://github.com/seu-usuario/seu-repo.git](https://github.com/felipereis13/IA-Preditiva-Bombeiros.git
 cd seu-repo
 ```
 
@@ -44,37 +47,46 @@ cd seu-repo
 
 ```bash
 python -m venv venv
-source venv/bin/activate  # No Windows: venv\Scripts\activate
+source venv/Scripts/activate  # No Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-3. Inicie o MongoDB (localmente ou em nuvem), depois rode a API Flask:
+3. Inicie o PostgreSQL (localmente ou em nuvem), depois rode a API Flask:
+
+```bash
+python train_model.py
+```
 
 ```bash
 python app.py
 ```
-
 4. Abra o arquivo `index.html` no navegador (a SPA se conecta à API Flask automaticamente).
 
 ---
 
-## 📦 Caixa de Previsão de Tipo de Caso
+## 📦 Sobre o Modelo de IA
 
-Na lateral da interface, há uma caixa onde você pode selecionar a **etnia**, **localização** e informar a **idade** da vítima.  
-Ao clicar em "Prever", o sistema utiliza o modelo XGBoost treinado para indicar o tipo de caso mais provável para aquele perfil.
+Na parte inferior da interface, há uma caixa onde você pode selecionar o **Gênero**, **localização** e informar a **idade** da vítima.  
+Ao clicar em "Prever", o sistema utiliza o modelo Random Forest treinado para indicar o tipo de caso mais provável para aquele perfil.
 
 ---
 
-## 📁 Exemplo de dado no MongoDB
+## 📁 Exemplo de dado no PostgreSQL
 
 ```json
 {
-  "data_do_caso": "2025-01-30",
-  "tipo_do_caso": "Assalto",
-  "localizacao": "Bairro A",
-  "vitima": {
-    "etnia": "Parda",
-    "idade": 13
+  "kpi_total": 50,
+  "natureza_ocorrencias": {
+    "labels": ["INCÊNDIO", "SALVAMENTO", "ATENDIMENTO PRÉ-HOSPITALAR"],
+    "series": [12, 15, 23]
+  },
+  "top_bairros": {
+    "labels": ["Centro", "Boa Viagem", "Madalena", "Casa Amarela", "Pina"],
+    "series": [10, 8, 5, 4, 3]
+  },
+  "situacao_vitimas": {
+    "labels": ["Com Vítimas", "Sem Vítimas"],
+    "series": [20, 30]
   }
 }
 ```
@@ -83,34 +95,39 @@ Ao clicar em "Prever", o sistema utiliza o modelo XGBoost treinado para indicar 
 
 ## 🔎 Endpoints da API
 
-- `GET /api/casos` → retorna todos os registros de casos.
-- `POST /api/casos` → insere um novo caso no banco.
-- `GET /api/modelo/coeficientes` → retorna a importância das variáveis no modelo XGBoost.
-- `POST /api/predizer` → retorna a previsão do tipo de caso para os dados informados (usado pela caixa de previsão).
+- `GET /api/dashboard/stats` → Retorna todos os dados para os gráficos (KPIs, Top Bairros, Natureza).
+- `GET /api/opcoes` → Retorna a lista de Bairros (em ordem alfabética) e Gêneros para o formulário.
+- `GET /api/casos` → Retorna a lista bruta de ocorrências.
+- `POST /api/predizer` → Recebe JSON com {idade, genero, localizacao} e retorna a previsão.
 
 ---
 
-## 📊 Sobre o modelo XGBoost
+## 📊 Sobre o Modelo de IA (Random Forest)
 
-O modelo é treinado com os dados disponíveis, utilizando variáveis como **etnia**, **idade da vítima**, **localização** e **data do caso**. O XGBoost gera uma métrica de importância para cada variável, e essas informações são exibidas graficamente na interface.
+O sistema utiliza o algoritmo **Random Forest Classifier** (da biblioteca Scikit-learn) para realizar a classificação supervisionada das ocorrências.
+O Random Forest foi escolhido porque ele é mais seguro, estável e fácil de implementar para o estágio atual do seu projeto, garantindo que o dashboard funcione sem erros de predição muito discrepante.
 
-As importâncias são normalizadas de 0 a 1, e o modelo é salvo em disco com `joblib` para ser carregado automaticamente pela API.
+### Como funciona o treinamento (`train_model.py`):
+1.  **Conexão Real:** O script conecta ao PostgreSQL para extrair os **Bairros** e **Tipos de Ocorrência** reais existentes no sistema legado.
+2.  **Enriquecimento de Dados:** Como o banco de dados original (Java) não armazena dados demográficos detalhados das vítimas, o script gera um dataset sintético combinando os bairros reais com **Gêneros** e **Idades** simulados.
+3.  **Serialização:** O modelo treinado é salvo no arquivo `model.pkl` usando `pickle`, pronto para ser consumido pela API.
+
+### Variáveis utilizadas na previsão:
+- **Localização (Bairro):** Variável categórica (One-Hot Encoded).
+- **Gênero:** Variável categórica (Masculino/Feminino).
+- **Idade:** Variável numérica.
 
 ---
 
-## ⚠️ Observações
+## ⚠️ Observações e Configuração
 
-- A SPA (`index.html`) deve ser aberta diretamente no navegador.
-- O backend Flask precisa estar rodando em `http://localhost:5000`.
-- O MongoDB deve estar acessível em `localhost:27017`, ou o URI pode ser ajustado em `app.py`.
-
+- **Frontend:** A SPA (`index.html`) não requer servidor web (Apache/Nginx) para desenvolvimento; basta abri-la diretamente no navegador, pois ela consome a API via CORS.
+- **Backend:** A API Flask deve estar rodando localmente em `http://localhost:5000`.
+- **Banco de Dados:** O projeto depende de uma instância **PostgreSQL** rodando na porta `5432`.
+  - A string de conexão no `app.py` deve apontar para o banco `central_controle_fogo`.
+  - É necessário que o banco já tenha sido populado pela aplicação Spring Boot (Java) para que os bairros e tipos de ocorrência estejam disponíveis.
 ---
-
-## ▶️ Demonstração em vídeo
-
-Veja em: https://youtu.be/FC-pZBshDtM
-
 ## 🧑‍💻 Autor
 
-Desenvolvido por [Welton Dionisio](https://github.com/weltondionisio).  
+Desenvolvido por [Felipe Reis](https://github.com/felipereis13).  
 Este projeto é livre para fins estritamente educacionais, mas não experimentais.
