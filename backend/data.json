@@ -1,0 +1,15 @@
+{
+  "kpi_total": 50,
+  "natureza_ocorrencias": {
+    "labels": ["INCÊNDIO", "SALVAMENTO", "ATENDIMENTO PRÉ-HOSPITALAR"],
+    "series": [12, 15, 23]
+  },
+  "top_bairros": {
+    "labels": ["Centro", "Boa Viagem", "Madalena", "Casa Amarela", "Pina"],
+    "series": [10, 8, 5, 4, 3]
+  },
+  "situacao_vitimas": {
+    "labels": ["Com Vítimas", "Sem Vítimas"],
+    "series": [20, 30]
+  }
+}
