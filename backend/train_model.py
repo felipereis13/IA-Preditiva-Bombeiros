@@ -12,10 +12,10 @@ import random
 
 # --- 1. Configuração do Banco de Dados ---
 DB_USER = "app_user"
-DB_PASS = urllib.parse.quote_plus("mIWKBrt3wMpbLCo6PE42TPRITpsRVI4V")
-DB_HOST = "dpg-d4to2u75r7bs73fgboog-a.oregon-postgres.render.com"
+DB_PASS = urllib.parse.quote_plus("7JZDOx3mZhIJDrGisvmU354b1WHYixiv")
+DB_HOST = "dpg-d4totfnpm1nc73cahejg-a.oregon-postgres.render.com"
 DB_PORT = "5432"
-DB_NAME = "central_controle_fogo_9tsy"
+DB_NAME = "central_controle_fogo_7sp0"
 
 DATABASE_URI = f'postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
 
