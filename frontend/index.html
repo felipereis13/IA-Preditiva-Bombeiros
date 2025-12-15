@@ -14,6 +14,11 @@
         --text: #000000;
       }
 
+      element.style {
+        color: none;
+        margin: 0;
+      }
+
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         margin: 0;
@@ -22,7 +27,9 @@
         color: var(--text);
       }
 
-      h1, h2, h3 {
+      h1,
+      h2,
+      h3 {
         color: var(--primary);
         margin-top: 0;
       }
@@ -54,8 +61,14 @@
         font-size: 3.5rem;
         margin: 10px 0;
       }
-      .kpi-card h3 { color: white; }
-      .kpi-card p { opacity: 0.8; font-size: 1.1rem; }
+      .kpi-card h3 {
+        color: white;
+      }
+
+      .kpi-card p {
+        opacity: 0.8;
+        font-size: 1.1rem;
+      }
 
       .predicao-section {
         grid-column: 1 / -1;
@@ -63,10 +76,20 @@
         border-top: 4px solid var(--secondary);
       }
 
-      .form-group { margin-bottom: 15px; }
-      label { display: block; margin-bottom: 5px; font-weight: bold; }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
 
-      .radio-group { display: flex; flex-wrap: wrap; gap: 10px; }
+      .radio-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
       .radio-item {
         background: #eee;
         padding: 5px 10px;
@@ -76,8 +99,12 @@
         display: flex;
         align-items: center;
       }
-      .radio-item:hover { background: #ddd; }
-      input[type="radio"] { margin-right: 5px; }
+      .radio-item:hover {
+        background: #ddd;
+      }
+      input[type="radio"] {
+        margin-right: 5px;
+      }
 
       input[type="number"] {
         padding: 8px;
@@ -96,7 +123,9 @@
         cursor: pointer;
         transition: background 0.3s;
       }
-      button:hover { background-color: #d35400; }
+      button:hover {
+        background-color: #d35400;
+      }
 
       .resultado-box {
         color: var(--primary);
@@ -107,7 +136,9 @@
         text-align: center;
       }
 
-      canvas { max-height: 300px; }
+      canvas {
+        max-height: 300px;
+      }
     </style>
   </head>
   <body>
@@ -142,7 +173,8 @@
           IA Preditiva: Classificador de Ocorrências
         </h2>
         <p>
-          Simule o gênero da vítima e o local para prever o grupo e subgrupo provável da Ocorrência.
+          Simule o gênero da vítima e o local para prever a o grupo e subgrupo
+          provável da Ocorrência.
         </p>
 
         <form id="form-predizer">
@@ -158,7 +190,14 @@
 
           <div class="form-group">
             <label for="idade">Idade Aproximada:</label>
-            <input type="number" id="idade" required min="1" max="120" value="30" />
+            <input
+              type="number"
+              id="idade"
+              required
+              min="1"
+              max="120"
+              value="30"
+            />
           </div>
 
           <button type="submit">Prever</button>
@@ -171,23 +210,19 @@
     </div>
 
     <script>
-      // --- CONFIGURAÇÃO AUTOMÁTICA DA API ---
-      // Se estiver rodando no localhost, usa a porta 5000. Se não, usa o Render.
-      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      
-      const API_BASE_URL = isLocalhost 
-          ? 'http://127.0.0.1:5000' 
-          : 'https://ia-preditiva-bombeirosccf.onrender.com'; // <--- SEU LINK DO RENDER
-
-      console.log(`Modo: ${isLocalhost ? 'LOCAL' : 'NUVEM'}`);
-      console.log(`API URL: ${API_BASE_URL}`);
-
       const cores = {
         azul: "#40516c",
         laranja: "#e67e22",
         verde: "#2ecc71",
         vermelho: "#b13433",
-        palette: ["#40516c", "#e67e22", "#2ecc71", "#e74c3c", "#9b59b6", "#34495e"],
+        palette: [
+          "#40516c",
+          "#e67e22",
+          "#2ecc71",
+          "#e74c3c",
+          "#9b59b6",
+          "#34495e",
+        ],
       }
 
       let chartNatureza = null
@@ -197,9 +232,9 @@
       // --- 1. Carregar Dashboard ---
       async function carregarDashboard() {
         try {
-          // Usa a variável API_BASE_URL aqui
-          const response = await fetch(`${API_BASE_URL}/api/dashboard/stats`)
-          
+          const response = await fetch(
+            "http://127.0.0.1:5000/api/dashboard/stats"
+          )
           if (!response.ok) throw new Error("Falha na API")
           const stats = await response.json()
 
@@ -221,11 +256,13 @@
           type: "doughnut",
           data: {
             labels: dados.labels,
-            datasets: [{
-              data: dados.series,
-              backgroundColor: cores.palette,
-              borderWidth: 1,
-            }],
+            datasets: [
+              {
+                data: dados.series,
+                backgroundColor: cores.palette,
+                borderWidth: 1,
+              },
+            ],
           },
           options: {
             responsive: true,
@@ -242,12 +279,14 @@
           indexAxis: "y",
           data: {
             labels: dados.labels,
-            datasets: [{
-              label: "Ocorrências",
-              data: dados.series,
-              backgroundColor: cores.vermelho,
-              borderRadius: 4,
-            }],
+            datasets: [
+              {
+                label: "Ocorrências",
+                data: dados.series,
+                backgroundColor: cores.vermelho,
+                borderRadius: 4,
+              },
+            ],
           },
           options: {
             responsive: true,
@@ -263,12 +302,14 @@
           type: "bar",
           data: {
             labels: dados.labels,
-            datasets: [{
-              label: "Total",
-              data: dados.series,
-              backgroundColor: [cores.vermelho, cores.verde],
-              barThickness: 50,
-            }],
+            datasets: [
+              {
+                label: "Total",
+                data: dados.series,
+                backgroundColor: [cores.vermelho, cores.verde],
+                barThickness: 50,
+              },
+            ],
           },
           options: {
             responsive: true,
@@ -280,8 +321,7 @@
       // --- 2. Carregar Opções ---
       async function carregarOpcoes() {
         try {
-          // Usa a variável API_BASE_URL aqui
-          const res = await fetch(`${API_BASE_URL}/api/opcoes`)
+          const res = await fetch("http://127.0.0.1:5000/api/opcoes")
           const data = await res.json()
 
           // GÊNERO
@@ -290,9 +330,11 @@
           if (data.generos) {
             data.generos.forEach((opt, i) => {
               generoDiv.innerHTML += `
-                <label class="radio-item">
-                  <input type="radio" name="genero" value="${opt}" ${i === 0 ? "checked" : ""}> ${opt}
-                </label>`
+                            <label class="radio-item">
+                                <input type="radio" name="genero" value="${opt}" ${
+                i === 0 ? "checked" : ""
+              }> ${opt}
+                            </label>`
             })
           } else {
             generoDiv.innerHTML = "Erro ao carregar gêneros"
@@ -303,9 +345,11 @@
           localDiv.innerHTML = ""
           data.locais.forEach((opt, i) => {
             localDiv.innerHTML += `
-              <label class="radio-item">
-                <input type="radio" name="localizacao" value="${opt}" ${i === 0 ? "checked" : ""}> ${opt}
-              </label>`
+                        <label class="radio-item">
+                            <input type="radio" name="localizacao" value="${opt}" ${
+              i === 0 ? "checked" : ""
+            }> ${opt}
+                        </label>`
           })
         } catch (error) {
           console.error("Erro ao carregar opções:", error)
@@ -318,8 +362,12 @@
         const resDiv = document.getElementById("resultado")
         resDiv.innerHTML = "Calculando probabilidade..."
 
-        const generoInput = document.querySelector('input[name="genero"]:checked')
-        const localInput = document.querySelector('input[name="localizacao"]:checked')
+        const generoInput = document.querySelector(
+          'input[name="genero"]:checked'
+        )
+        const localInput = document.querySelector(
+          'input[name="localizacao"]:checked'
+        )
         const idadeInput = document.getElementById("idade")
 
         if (!generoInput || !localInput) {
@@ -334,8 +382,7 @@
         }
 
         try {
-          // Usa a variável API_BASE_URL aqui
-          const response = await fetch(`${API_BASE_URL}/api/predizer`, {
+          const response = await fetch("http://127.0.0.1:5000/api/predizer", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(dados),
@@ -344,11 +391,16 @@
 
           if (result.classe_predita) {
             const prob = (result.confianca * 100).toFixed(1)
+
             resDiv.innerHTML = `
-              <h3 style="color: ${cores.vermelho}; margin:0;">${result.classe_predita}</h3>
-              <p>Probabilidade: <strong>${prob}%</strong></p>
-              <small style="color: ${cores.laranja};">${result.aviso || ""}</small>
-            `
+                        <h3 style="color: ${cores.vermelho}; margin:0;">${
+              result.classe_predita
+            }</h3>
+                        <p>Probabilidade: <strong>${prob}%</strong></p>
+                        <small style="color: ${cores.laranja};">${
+              result.aviso || ""
+            }</small>
+                    `
           } else {
             resDiv.innerHTML = `<span style="color:red">Erro: ${result.erro}</span>`
           }
